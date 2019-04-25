@@ -50,6 +50,12 @@ Route::group(['namespace'=>'Api','prefix' =>'v1'],function(){
         Route::group(['middleware'=>'auth:restaurant'],function(){
 
             Route::post('resturant_info', 'resturant\MainController@resturant_info');
+            Route::post('add_product', 'resturant\MainController@add_product');
+            Route::post('all_products', 'resturant\MainController@all_products');
+            Route::post('edit_product', 'resturant\MainController@edit_product');
+            Route::post('add_offer', 'resturant\MainController@add_offer');
+            Route::post('all_offers', 'resturant\MainController@all_offers');
+
 
         });
     });
