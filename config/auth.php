@@ -46,6 +46,16 @@ return [
             'provider' => 'users',
             'hash' => false,
         ],
+        'client'=> [
+            'driver' => 'token',
+            'provider' => 'clients',
+            'hash' => false,
+        ],
+        'restaurant'=> [
+            'driver' => 'token',
+            'provider' => 'restaurants',
+            'hash' => false,
+        ],
     ],
 
     /*
@@ -69,6 +79,14 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => App\User::class,
+        ],
+        'clients' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Client::class,
+        ],
+        'restaurants' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Resturant::class,
         ],
 
         // 'users' => [
