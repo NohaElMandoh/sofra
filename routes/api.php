@@ -23,7 +23,12 @@ Route::group(['namespace'=>'Api','prefix' =>'v1'],function(){
     Route::get('cities', 'MainController@cities');
     Route::get('neighborhoods', 'MainController@neighborhoods');
     Route::get('neighborhoods_to_city', 'MainController@neighborhoods_to_city');
+    Route::post('resturant_info', 'resturant\MainController@resturant_info');
+    Route::get('about', 'MainController@about');
+    Route::get('contact_us', 'MainController@contact_us');
+    Route::post('resturants', 'MainController@resturants');  ///////// how to search by city
 
+ Route::get('restaurant_products', 'MainController@restaurant_products');
     ///client
     Route::group(['prefix' =>'client'],function(){
         Route::post('register_client', 'client\AuthController@register');
@@ -31,6 +36,8 @@ Route::group(['namespace'=>'Api','prefix' =>'v1'],function(){
         Route::post('reset', 'Client\AuthController@reset');
         Route::post('check_code', 'Client\AuthController@check_code');
         Route::post('update_password', 'Client\AuthController@update_password');
+        Route::post('new_order', 'Client\MaiController@new_order');
+
 
 
         Route::group(['middleware'=>'auth:restaurant'],function(){
@@ -49,7 +56,7 @@ Route::group(['namespace'=>'Api','prefix' =>'v1'],function(){
 
         Route::group(['middleware'=>'auth:restaurant'],function(){
 
-            Route::post('resturant_info', 'resturant\MainController@resturant_info');
+
             Route::post('add_product', 'resturant\MainController@add_product');
             Route::post('all_products', 'resturant\MainController@all_products');
             Route::post('edit_product', 'resturant\MainController@edit_product');
