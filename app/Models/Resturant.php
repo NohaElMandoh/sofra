@@ -22,7 +22,7 @@ class Resturant extends Model
     }
     public function order()
     {
-        return $this->hasMany('Models\Order');
+        return $this->hasMany('App\Models\Order');
     }
 
     public function products()

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\resturant;
 
+use App\Models\Order;
 use App\Models\Resturant;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -129,5 +130,72 @@ class MainController extends Controller
         $offers = $request->user()->make_offer()->latest()->paginate(20);
         return responseJson(1,'تم التحميل',$offers);
     }
+//        status=0==>new
+//              =1=>accepted
+//              =2=>rejected
+    public function my_orders(Request $request)
+    {
+        $orders = $request->user()->order()->where(function($order) use($request){
+            if ($request->has('status') && $request->status == 'completed')
+            {
+                $order->where('status' , '1')->where('delivery_status_resturant','1')->where('delivery_status_client','1');
+            }elseif ($request->has('status') && $request->state == 'current')
+            {
+                $order->where('status' ,  '1');
+            }
+        })->with('products')->latest()->paginate(20);
+        return responseJson(1,'تم التحميل',$orders);
+    }
 
+    public function order_details(Request $request)
+    {
+        $order= Order::with('products')->find($request->order_id);
+        return responseJson(1,'تم التحميل',$order);
+    }
+    public function accept_order(Request $request)
+    {
+        $order= $request->user()->order()->find($request->order_id);
+        if (!$order)
+        {
+            return responseJson(0,'لا يمكن الحصول على بيانات الطلب');
+        }
+//        1-->accepted
+        if ($order->status == '1')
+        {
+            return responseJson(1,'تم قبول الطلب');
+        }
+        $order->update(['status' => '1']);
+        return responseJson(1,'تم قبول الطلب');
+    }
+    public function reject_order(Request $request)
+    {
+        $order= $request->user()->order()->find($request->order_id);
+        if (!$order)
+        {
+            return responseJson(0,'لا يمكن الحصول على بيانات الطلب');
+        }
+        if ($order->status == '0')
+        {
+            return responseJson(1,'تم رفض الطلب');
+        }
+        $order->update(['status' => '0']);
+
+        return responseJson(1,'تم رفض الطلب');
+    }
+
+    public function confirm_order(Request $request)
+    {
+        $order = $request->user()->order()->find($request->order_id);
+        if (!$order)
+        {
+            return responseJson(0,'لا يمكن الحصول على بيانات الطلب');
+        }
+        if ($order->status ='2')
+        {
+            return responseJson(0,'لا يمكن تأكيد الطلب ، لم يتم قبول الطلب');
+        }
+        $order->update(['delivery_status_resturant' => '1']);
+
+        return responseJson(1,'تم تأكيد الاستلام');
+    }
 }

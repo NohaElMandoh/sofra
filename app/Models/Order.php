@@ -1,6 +1,6 @@
 <?php
 
-namespace Models;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -13,7 +13,7 @@ class Order extends Model
 
     public function products()
     {
-        return $this->belongsToMany('Models\Product');
+        return $this->belongsToMany('App\Models\Product');
     }
 
     public function notifications()
@@ -23,7 +23,10 @@ class Order extends Model
 
     public function clients()
     {
-        return $this->belongsToMany('Models\Client');
+        return $this->belongsToMany('App\Models\Client');
     }
-
+    public function resturant()
+    {
+        return $this->belongsTo('App\Models\Resturant');
+    }
 }

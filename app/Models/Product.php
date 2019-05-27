@@ -13,7 +13,7 @@ class Product extends Model
 
     public function order()
     {
-        return $this->belongsToMany('Models\Order');
+        return $this->belongsToMany('App\Models\Order');
     }
     public function resturant()
     {

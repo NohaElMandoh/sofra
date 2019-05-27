@@ -36,15 +36,17 @@ Route::group(['namespace'=>'Api','prefix' =>'v1'],function(){
         Route::post('reset', 'Client\AuthController@reset');
         Route::post('check_code', 'Client\AuthController@check_code');
         Route::post('update_password', 'Client\AuthController@update_password');
-        Route::post('new_order', 'Client\MaiController@new_order');
 
-
-
-        Route::group(['middleware'=>'auth:restaurant'],function(){
+        Route::group(['middleware'=>'auth:client'],function(){
             Route::post('profile', 'Client\AuthController@profile');
+            Route::post('new_order', 'Client\MaiController@new_order');
+            Route::post('my_orders', 'Client\MaiController@my_orders');
+            Route::post('order_details', 'Client\MaiController@order_details');
+            Route::post('reject_order', 'Client\MaiController@reject_order');
+
+            Route::post('confirm_order', 'Client\MaiController@confirm_order');
         });
     });
-
 
 ///resturant
     Route::group(['prefix' =>'restaurant'],function(){
@@ -56,12 +58,18 @@ Route::group(['namespace'=>'Api','prefix' =>'v1'],function(){
 
         Route::group(['middleware'=>'auth:restaurant'],function(){
 
-
             Route::post('add_product', 'resturant\MainController@add_product');
             Route::post('all_products', 'resturant\MainController@all_products');
             Route::post('edit_product', 'resturant\MainController@edit_product');
             Route::post('add_offer', 'resturant\MainController@add_offer');
             Route::post('all_offers', 'resturant\MainController@all_offers');
+            Route::post('my_orders', 'resturant\MainController@my_orders');
+            Route::post('order_details', 'resturant\MainController@order_details');
+
+            Route::post('accept_order', 'resturant\MainController@accept_order');
+            Route::post('reject_order', 'resturant\MainController@reject_order');
+
+            Route::post('confirm_order', 'resturant\MainController@confirm_order');
 
 
         });

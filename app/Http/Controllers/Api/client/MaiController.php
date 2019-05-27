@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\client;
 
+use App\Models\Order;
 use App\Models\Product;
 use App\Models\Resturant;
 use Illuminate\Http\Request;
@@ -51,6 +52,7 @@ class MaiController extends Controller
             'state' => 'pending', // db default
             'delivery_address' => $request->address,
             'payment_method_id' => $request->payment_method_id,
+            'status'=>0
         ]);
 //
         $cost = 0;
@@ -64,13 +66,65 @@ class MaiController extends Controller
                 $i['product_id'] => [
                     'count' => $i['count'],
                     'total_price' => $product->price,
-                    'special_order' => (isset($i['note'])) ? $i['note'] : ''
+                    'special_order' => (isset($i['special_order'])) ? $i['special_order'] : ''
                 ]
             ];
             $order->products()->attach($readyItem);
             $cost += ($product->price * $i['count']);
         }
 
+
+
     }
 
+    public function my_orders(Request $request)
+    {
+        $orders = $request->user()->make_order()->where(function($order) use($request){
+            if ($request->has('state') && $request->state == 'completed')
+            {
+                $order->where('state' , '!=' , 'pending');
+            }elseif ($request->has('state') && $request->state == 'current')
+            {
+                $order->where('state' , '=' , 'pending');
+            }
+        })->with('resturant','products')->latest()->paginate(20);
+        return responseJson(1,'تم التحميل',$orders);
+    }
+
+    public function order_details(Request $request)
+    {
+        $order= Order::with('resturant','products')->find($request->order_id);
+        return responseJson(1,'تم التحميل',$order);
+    }
+    public function reject_order(Request $request)
+    {
+        $order= $request->user()->make_order()->find($request->order_id);
+        if (!$order)
+        {
+            return responseJson(0,'لا يمكن الحصول على بيانات الطلب');
+        }
+        if ($order->status == '0')
+        {
+            return responseJson(1,'تم رفض الطلب');
+        }
+        $order->update(['delivery_status_client' => '0']);
+
+        return responseJson(1,'تم رفض الطلب');
+    }
+
+    public function confirm_order(Request $request)
+    {
+        $order = $request->user()->make_order()->find($request->order_id);
+        if (!$order)
+        {
+            return responseJson(0,'لا يمكن الحصول على بيانات الطلب');
+        }
+        if ($order->status ='2')
+        {
+            return responseJson(0,'لا يمكن تأكيد الطلب ، لم يتم قبول الطلب');
+        }
+        $order->update(['delivery_status_client' => '1']);
+
+        return responseJson(1,'تم تأكيد الاستلام');
+    }
 }
